@@ -153,4 +153,10 @@ Beyond these the assembler has been checked against asm68k with several
 complete programs, among them the [Sonic the Hedgehog disassembly][s1] in
 its version for asm68k: 153,000 lines that assemble to the same 512 KB.
 
+## License
+
+This is free to use for any purpose, under the terms of either the
+[BSD Zero Clause License](LICENSE-0BSD) or the [Unlicense](UNLICENSE), as
+you prefer.
+
 [s1]: https://github.com/sonicretro/s1disasm/tree/asm68k
