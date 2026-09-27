@@ -1,0 +1,70 @@
+00000000                            ; switches: /k /p /o ae-
+00000000                            ; ORG, the layout of the output and the optimisation options.
+00000000                            	org	$100
+00000100 01                         	dc.b	1
+00000101                            	org	$110
+00000110 02                         	dc.b	2
+00000111                            	org	$108
+00000108 03                         	dc.b	3
+00000109                            	org	$120
+00000120                            back:
+00000120                            	opt	ow+
+00000120 3038 0120                  	move.w	back,d0
+00000124 3038 1234                  	move.w	$1234,d0
+00000128 3038 8000                  	move.w	$ffff8000,d0
+0000012C 3039 0000 8000             	move.w	$8000,d0
+00000132 3039 0000 0000             	move.w	fwd,d0
+00000138 3039 0000 0120             	move.w	(back).l,d0
+0000013E 4EF8 0120                  	jmp	back
+00000142                            	opt	ow-
+00000142                            	opt	os+
+00000142 60DC                       	bra	back
+00000144 6000 0000                  	bra	fwd
+00000148 6000 FFD6                  	bra.w	back
+0000014C 67D2                       	beq	back
+0000014E 61D0                       	bsr	back
+00000150                            	opt	os-
+00000150                            	opt	op+
+00000150 303A FFCE                  	move.w	back,d0
+00000154 41FA FFCA                  	lea	back,a0
+00000158 4EBA FFC6                  	jsr	back
+0000015C 4EB9 0000 0000             	jsr	fwd
+00000162 33C0 0000 0120             	move.w	d0,back
+00000168                            	opt	op-
+00000168                            	opt	oz+
+00000168 3010                       	move.w	0(a0),d0
+0000016A 3028 0000                  	move.w	zero(a0),d0
+0000016E 3028 0000                  	move.w	fwdzero(a0),d0
+00000172                            	opt	oz-
+00000172                            	opt	oaq+,osq+,omq+
+00000172 5240                       	add.w	#1,d0
+00000174 5040                       	add.w	#8,d0
+00000176 0640 0009                  	add.w	#9,d0
+0000017A 5288                       	add.l	#1,a0
+0000017C 5240                       	addi.w	#1,d0
+0000017E 5340                       	sub.w	#1,d0
+00000180 7001                       	move.l	#1,d0
+00000182 70FF                       	move.l	#-1,d0
+00000184 203C 0000 0080             	move.l	#$80,d0
+0000018A 303C 0001                  	move.w	#1,d0
+0000018E 207C 0000 0001             	move.l	#1,a0
+00000194 20BC 0000 0001             	move.l	#1,(a0)
+0000019A 0640 0000                  	add.w	#fwdzero+1,d0
+0000019E                            	opt	oaq-,osq-,omq-
+0000019E =00000000                  zero	equ	0
+0000019E                            fwd:
+0000019E =00000000                  fwdzero	equ	0
+0000019E 303C FFFF                  	move.w	#$ffff,d0
+000001A2 303C FFFF                  	move.w	#-1,d0
+000001A6 303C 8000                  	move.w	#-$8000,d0
+000001AA 103C 00FF                  	move.b	#$ff,d0
+000001AE 103C 00FF                  	move.b	#-1,d0
+000001B2 103C 0080                  	move.b	#-$80,d0
+000001B6 70FF                       	moveq	#$ffffffff,d0
+000001B8 3028 FFFF                  	move.w	-1(a0),d0
+000001BC 3028 7FFF                  	move.w	$7fff(a0),d0
+000001C0 3028 8000                  	move.w	-$8000(a0),d0
+000001C4 3030 007F                  	move.w	$7f(a0,d0.w),d0
+000001C8 3030 0080                  	move.w	-$80(a0,d0.w),d0
+000001CC FFFF FFFF                  	dc.l	$ffffffff
+000001D0 5040                       	addq	#8,d0

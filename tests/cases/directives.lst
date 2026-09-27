@@ -1,0 +1,72 @@
+00000000                            ; switches: /k /p /m /o ae-
+00000000                            ; Local labels, RS counters, alignment and data directives.
+00000000                            	org	$10
+00000010                            glob1:
+00000010 01                         @a	dc.b	1
+00000011 0000                       	dc.b	@a-glob1, @b-glob1
+00000013 =00000005                  eq1	equ	5
+00000013 02                         @b	dc.b	2
+00000014 00                         	dc.b	@a-glob1
+00000015                            mm	macro
+00000015                            	dc.b	@a-glob1
+00000015                            @m\@	dc.b	\1
+00000015                            	dc.b	@m\@-glob1
+00000015                            	endm
+00000015                            	mm	3
+00000015 00                       M 	dc.b	@a-glob1
+00000016 03                       M @m_1	dc.b	3
+00000017 06                       M 	dc.b	@m_1-glob1
+00000018                            	mm	4
+00000018 00                       M 	dc.b	@a-glob1
+00000019 04                       M @m_2	dc.b	4
+0000001A 09                       M 	dc.b	@m_2-glob1
+0000001B 00                         	dc.b	@a-glob1
+0000001C                            glob2
+0000001C 05                         @a	dc.b	5
+0000001D 0C                         	dc.b	@a-glob1
+0000001E 60FC                       	bra.s	@a
+00000020 07                         	dc.b	7
+00000022 004E 71                    	nop
+00000024                            	rsreset
+00000024 =00000000                  r1	rs.b	1
+00000024 =00000001                  r2	rs.w	1
+00000024 =00000003                  r3	rs.l	1
+00000024 =00000007                  r4	rs.b	3
+00000024 =0000000A                  r5	rs	2
+00000024 =0000000E                  r6	rs.b	0
+00000024 0001 0307 0A0E 0E          	dc.b	r1,r2,r3,r4,r5,r6,__rs
+0000002B                            	rsset	$100
+0000002B =00000100                  r7	rs.w	1
+0000002B 0100 0102                  	dc.w	r7,__rs
+0000002F                            	rsreset	4
+0000002F =00000004                  r8	rs.l	1
+0000002F 0004 0008                  	dc.w	r8,__rs
+00000034 00                         	even
+00000034 01                         	dc.b	1
+00000036 00                         	even
+00000036 01                         	dc.b	1
+00000037 00                         	cnop	0,4
+00000038 01                         	dc.b	1
+00000039 00                         	cnop	2,4
+0000003A 01                         	dc.b	1
+0000003B 0000 00                    	ds.b	3
+0000003E 0000 0000                  	ds.w	2
+00000042 0000 0000                  	ds.l	1
+00000046 0000                       	ds	1
+00000048 AAAA AA                    	dcb.b	3,$aa
+0000004B BBCC BBCC                  	dcb.w	2,$bbcc
+0000004F 1122 3344                  	dcb.l	1,$11223344
+00000053 0055                       	dcb	1,$55
+00000055                            	incbin	"inc/data.bin"
+0000005F                            	incbin	inc/data.bin,2
+00000067                            	incbin	'inc/data.bin',2,3
+0000006A 0102 ABCD                  	hex	0102aBcD
+0000006E 0A                         	dc.b	filesize("inc/data.bin")
+0000006F                            	obj	$8000
+00008000 0000 8000 0000 8000        ob1:	dc.l	*,ob1
+00008008                            	objend
+00000077 0000 0077 0000 0077        ob2:	dc.l	*,ob2
+0000007F                            	inform	0,"hello %d %h %s",10,$abcd,"str"
+0000007F                            	inform	1,"warn"
+0000007F                            	inform	0,"val %d%d",-1,100000
+0000007F                            	inform	0,"%h %h",-1,$12

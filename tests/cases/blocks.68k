@@ -1,0 +1,65 @@
+; switches: /k /p /o ae-
+; Blocks of data, which are left out of the listing when large.
+	org	0
+	dcb.b	64,1
+	dcb.b	100,2
+	dcb.b	127,2
+	dcb.b	128,2
+	dcb.b	129,2
+	dcb.b	255,3
+	dcb.b	256,4
+	dcb.b	257,5
+	dcb.w	63,6
+	dcb.w	64,6
+	dcb.w	65,6
+	dcb.l	32,7
+	dcb.l	33,7
+	dcb.b	1024,7
+	ds.b	64
+	ds.b	127
+	ds.b	128
+	ds.b	129
+	ds.b	256
+	ds.b	1024
+	ds.w	64
+	ds.w	65
+m1	macro
+
+	dc.b	1
+ 
+	
+	dc.b	2
+	endm
+	rept	2
+
+	dc.b	3
+	endr
+	m1
+m1	macro
+; comment in macro
+	dc.b	1	; trailing comment
+* star comment
+	dc.b	2
+	endm
+m2	macro
+	rept 129
+	dc.w	$1234
+	endr
+	endm
+m3	macro
+	rept 128
+	dc.w	$1234
+	endr
+	endm
+	m1
+	rept	256
+	dc.b	1
+	endr
+	rept	257
+	dc.b	2
+	endr
+	m2
+	m3
+	dcb.w	128,3
+	dcb.w	129,4
+	dc.b	1

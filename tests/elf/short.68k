@@ -1,0 +1,13 @@
+; Short references to symbols defined elsewhere, in code that is not put
+; in a section.
+	xref	ext8,extfn
+	xdef	entry
+entry:
+	bsr.s	extfn
+	move.w	extfn(pc),d0
+	move.w	extfn(pc,d0.w),d0
+	move.b	#ext8,d0
+	move.w	ext8(a0),d0
+	move.b	ext8(a0,d1.w),d0
+	dc.b	ext8
+	even

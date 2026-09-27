@@ -1,0 +1,137 @@
+00000000                            ; switches: /k /p /o ae-
+00000000                            ; Instruction encodings and the forms asm68k picks for them.
+00000000                            	org	0
+00000000                            back:
+00000000 6000 FFFE                  	bra	back
+00000004 6000 0000                  	bra	fwd
+00000008 6000                       	bra.s	near
+0000000A 4E71                       	nop
+0000000C                            near:
+0000000C 6100 0000                  	bsr	fwd
+00000010 6700 0000                  	beq	fwd
+00000014 51C8 FFEA                  	dbra	d0,back
+00000018 4EF9 0000 0000             	jmp	fwd
+0000001E 4EF9 0000 0000             	jmp	back
+00000024 4EBA FFDA                  	jsr	back(pc)
+00000028 3039 0000 0000             	move.w	fwd,d0
+0000002E 3039 0000 0000             	move.w	back,d0
+00000034 3039 0000 1234             	move.w	($1234),d0
+0000003A 3039 0000 1234             	move.w	$1234,d0
+00000040 3038 1234                  	move.w	($1234).w,d0
+00000044 3038 1234                  	move.w	$1234.w,d0
+00000048 3038 8000                  	move.w	($ffff8000).w,d0
+0000004C 3039 FFFF 8000             	move.w	$ffff8000,d0
+00000052 3039 00FF 8000             	move.w	($ff8000).l,d0
+00000058 203C 0000 0000             	move.l	#fwd,d0
+0000005E 41FA 0000                  	lea	fwd(pc),a0
+00000062 41FB 0000                  	lea	near2(pc,d0.w),a0
+00000066 4E71                       	nop
+00000068                            near2:
+00000068 41FB 0896                  	lea	back(pc,d0.l),a0
+0000006C 3028 0000                  	move.w	0(a0),d0
+00000070 3010                       	move.w	(a0),d0
+00000072 3030 1004                  	move.w	4(a0,d1.w),d0
+00000076 3030 1004                  	move.w	(4,a0,d1.w),d0
+0000007A 3028 0004                  	move.w	(4,a0),d0
+0000007E 3030 1000                  	move.w	(a0,d1),d0
+00000082 3028 0000                  	move.w	fwdequ(a0),d0
+00000086 0640 0001                  	add.w	#1,d0
+0000008A 0650 0001                  	add.w	#1,(a0)
+0000008E D0FC 0001                  	add.w	#1,a0
+00000092 0440 0001                  	sub.w	#1,d0
+00000096 0240 0001                  	and.w	#1,d0
+0000009A 0040 0001                  	or.w	#1,d0
+0000009E 0A40 0001                  	eor.w	#1,d0
+000000A2 0C40 0001                  	cmp.w	#1,d0
+000000A6 0C50 0001                  	cmp.w	#1,(a0)
+000000AA B0FC 0001                  	cmp.w	#1,a0
+000000AE B348                       	cmp.w	(a0)+,(a1)+
+000000B0 2040                       	move.l	d0,a0
+000000B2 3040                       	move.w	d0,a0
+000000B4 D1C0                       	add.l	d0,a0
+000000B6 D240                       	add	d0,d1
+000000B8 3200                       	move	d0,d1
+000000BA 40C0                       	move	sr,d0
+000000BC 46C0                       	move	d0,sr
+000000BE 44C0                       	move	d0,ccr
+000000C0 4E68                       	move.l	usp,a0
+000000C2 4E60                       	move.l	a0,usp
+000000C4 023C 00FE                  	and	#$fe,ccr
+000000C8 007C 0700                  	or	#$700,sr
+000000CC 023C 00FE                  	andi	#$fe,ccr
+000000D0 70FF                       	moveq	#-1,d0
+000000D2 707F                       	moveq	#$7f,d0
+000000D4 7000                       	moveq.l	#0,d0
+000000D6 5040                       	addq	#8,d0
+000000D8 5248                       	addq.w	#1,a0
+000000DA 5288                       	addq.l	#1,a0
+000000DC 5340                       	subq	#1,d0
+000000DE E348                       	lsl.w	#1,d0
+000000E0 E148                       	lsl.w	#8,d0
+000000E2 E368                       	lsl.w	d1,d0
+000000E4 E3D0                       	lsl.w	(a0)
+000000E6 E3D0                       	lsl	(a0)
+000000E8 E340                       	asl.w	d0
+000000EA 0800 0000                  	btst	#0,d0
+000000EE 0810 0000                  	btst.b	#0,(a0)
+000000F2 0800 0000                  	btst.l	#0,d0
+000000F6 0310                       	btst	d1,(a0)
+000000F8 08D0 0007                  	bset	#7,(a0)
+000000FC 48E7 FFFE                  	movem.l	d0-d7/a0-a6,-(sp)
+00000100 4CDF 7FFF                  	movem.l	(sp)+,d0-d7/a0-a6
+00000104 48A7 8000                  	movem.w	d0,-(sp)
+00000108 48E8 0101 0004             	movem.l	d0/a0,4(a0)
+0000010E 0108 0000                  	movep.w	0(a0),d0
+00000112 01C8 0004                  	movep.l	d0,4(a0)
+00000116 4840                       	swap	d0
+00000118 4880                       	ext.w	d0
+0000011A 48C0                       	ext.l	d0
+0000011C 4880                       	ext	d0
+0000011E C141                       	exg	d0,d1
+00000120 C149                       	exg	a0,a1
+00000122 C189                       	exg	d0,a1
+00000124 C189                       	exg	a1,d0
+00000126 4E56 FFFC                  	link	a6,#-4
+0000012A 4E5E                       	unlk	a6
+0000012C 4E40                       	trap	#0
+0000012E 4E72 2700                  	stop	#$2700
+00000132 50C0                       	st	d0
+00000134 50D0                       	st.b	(a0)
+00000136 4AC0                       	tas	d0
+00000138 4AD0                       	tas.b	(a0)
+0000013A 4240                       	clr	d0
+0000013C 4A40                       	tst	d0
+0000013E 4440                       	neg	d0
+00000140 4640                       	not	d0
+00000142 C2C0                       	mulu	d0,d1
+00000144 C3FC 0005                  	muls.w	#5,d1
+00000148 82D0                       	divu	(a0),d1
+0000014A 4380                       	chk	d0,d1
+0000014C 4879 0000 0000             	pea	fwd
+00000152 4868 0004                  	pea	4(a0)
+00000156 4E71                       	nop
+00000158 4E75                       	rts
+0000015A 4E73                       	rte
+0000015C 4E77                       	rtr
+0000015E 4E70                       	reset
+00000160 4E76                       	trapv
+00000162 4AFC                       	illegal
+00000164 C300                       	abcd	d0,d1
+00000166 8308                       	sbcd	-(a0),-(a1)
+00000168 D340                       	addx.w	d0,d1
+0000016A 9388                       	subx.l	-(a0),-(a1)
+0000016C 4800                       	nbcd	d0
+0000016E B308                       	cmpm.b	(a0)+,(a1)+
+00000170 B0C0                       	cmpa.w	d0,a0
+00000172 D0FC 0004                  	adda.w	#4,a0
+00000176 91C9                       	suba.l	a1,a0
+00000178 2C78 0004                  	movea.l	4.w,a6
+0000017C 6400                       	bhs.s	fwd
+0000017E 6500                       	blo.s	fwd
+00000180 51C8 FE7E                  	dbf	d0,back
+00000184 54C8 FE7A                  	dbhs	d0,back
+00000188 54C0                       	shs	d0
+0000018A 55C0                       	slo	d0
+0000018C                            fwd:
+0000018C =00000006                  fwdequ	equ	6
+0000018C 4E75                       	rts

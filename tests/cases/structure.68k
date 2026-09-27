@@ -1,0 +1,126 @@
+; switches: /k /p /m /o ae-
+; Modules, LOCAL, macro labels, PUSHP, MEXIT, CASE, EQUR and REG.
+	org	$1000
+; --- modules and locals
+Strat	module
+	moveq	#1,d0
+	bra.s	@Lab1
+	nop
+@Lab1	subq.w	#1,d0
+	beq.s	@SetTact
+	rts
+@SetTact	module
+	move.w	#2,(a0)
+@Lab1	move.l	a1,-(sp)
+	move.l	(a1),d0
+	bgt.s	@Lab1
+	rts
+	modend
+glob_in_mod:
+	bra.s	@Lab1
+	modend
+after:
+@x	dc.b	1
+	dc.b	@x-after
+; --- local in macro
+doorpos	macro
+	local	m_door1,doorw
+	bsr.s	doorw
+	nop
+m_door1	equ	\1*2
+doorw	dc.b	m_door1
+	even
+	endm
+	doorpos	3
+	doorpos	4
+; --- macro label parameter
+lblm	macro	*,val
+\*_tab	dc.b	\val
+\*_len	equ	1
+	endm
+first	lblm	5
+second	lblm	6
+	dc.b	first_tab-after,second_tab-after,first_len
+; --- pushp / popp
+	pushp	"hello"
+	pushp	"world"
+	popp	str1
+	popp	str2
+	dc.b	"\str1","\str2"
+; --- mexit and nested macros
+inner	macro
+	dc.b	\1
+	if \1>5
+	mexit
+	endif
+	dc.b	$ff
+	endm
+outer	macro
+	rept	narg
+	inner	\1
+	shift
+	endr
+	dc.b	$ee
+	endm
+	outer	1,9,2
+; --- purge and redefinition
+pm	macro
+	dc.b	1
+	endm
+	pm
+pm	macro
+	dc.b	2
+	endm
+	pm
+	purge	pm
+; --- macros directive
+short	macros
+	dc.b	\1,\2
+	short	7,8
+; --- opt pusho popo
+	pusho
+	opt	ae+
+	dc.b	1
+	dc.w	2
+	popo
+	dc.b	1
+	dc.w	3
+; --- case
+val	equ	3
+	case	val
+=1
+	dc.b	$c1
+=2,3
+	dc.b	$c2
+=?
+	dc.b	$c3
+	endcase
+	case	val+10
+=1
+	dc.b	$d1
+=?
+	dc.b	$d3
+	endcase
+	even
+; --- equr / reg
+Red	equr	a2
+Green	equr	d1
+saved	reg	d0-d3/a0-a1
+	cmp.b	4(Red,Green.w),d0
+	move.l	Red,Green
+	movem.l	saved,-(sp)
+	movem.l	(sp)+,saved
+	movem.l	d0-d1/Red,-(sp)
+	move.w	(Red)+,-(Red)
+; --- forward equ chains
+	dc.w	fa,fb
+fa	equ	fb+1
+fb	equ	fc*2
+fc	equ	21
+	dc.w	fa,fb
+; --- set before use
+cnt	set	1
+	dc.b	cnt
+cnt	set	cnt+1
+	dc.b	cnt
+	even

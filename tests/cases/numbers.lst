@@ -1,0 +1,15 @@
+00000000                            ; switches: /k /p /o ae-
+00000000                            ; Numbers, addresses with sizes and immediate forms.
+00000000                            	org	0
+00000000 0010                       	dc.w	0x10
+00000002 001F                       	dc.w	0X1f
+00000004 0011                       	dc.w	017
+00000006 001F                       	dc.w	$1F
+00000008 9AFC 0020                  	subi.w	#$20,a5
+0000000C DBFC 0000 0020             	addi.l	#$20,a5
+00000012 BAFC 0020                  	cmpi.w	#$20,a5
+00000016 524D                       	addq.w	#1,a5
+00000018 083A 0001 0000             	btst	#1,label(pc)
+0000001E                            label:
+0000001E 3028 0006                  	move.w	2+(4)(a0),d0
+00000022 3028 0006                  	move.w	(2)+4(a0),d0

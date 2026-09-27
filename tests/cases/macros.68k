@@ -1,0 +1,73 @@
+; switches: /k /p /m /o ae-
+; Macro parameters and the special backslash sequences.
+	org	0
+m1	macro
+	dc.b	\1,\2
+	dc.b	narg
+	endm
+m2	macro	aa,bb
+	dc.b	\aa,\bb
+	dc.b	aa+1
+	dc.b	"\aa",'\bb'
+	dc.b	"aa"
+	endm
+m3	macro
+	dc.b	"\0"
+	dc.\0	\1
+	endm
+m4	macro
+lbl\@	dc.b	\1
+	dc.b	lbl\@-m4base
+	dc.b	"\@"
+	endm
+m5	macro
+	dc.b	\_
+	dc.b	"\_"
+	endm
+m6	macro
+	rept	narg
+	dc.b	\1
+	shift
+	endr
+	endm
+m7	macro
+	move.w	\1,\2
+	endm
+m8	macro
+	dc.b	"\1","\2","\3"
+	dc.b	narg
+	endm
+m4base:
+	m1	1,2
+	m1	3, 4
+	m1	5,6,7,8
+	M1	9,10
+	m2	11,12
+	m3.b	13
+	m3.w	14
+	m3	15
+	m4	16
+	m4	17
+	m5	18,19,20
+	m5	21, 22
+	m6	23,24,25
+	m7	(a0)+, -(a1)
+	m7	#"A,",d0
+	m8	<a,b>,c
+	m8	a b,c
+	m8	(a,b),c
+	m8	,c
+	m8	a,,c
+	m8	a,b,
+	m8
+	m8	a ;comment
+	m8	<a b> c
+	m8	a,&
+	b,&
+		c
+val	equ	33
+	dc.b	"\#val","\$val"
+	dc.b	"x\#val\y"
+v2	=	$1234
+	dc.b	"\$v2"
+	dc.b	"\#v2"

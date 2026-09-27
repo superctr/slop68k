@@ -1,0 +1,97 @@
+; switches: /k /p /m /o ae-
+; String equates, string functions, conditionals and loops.
+	org	0
+str	equs	"hello"
+num	equs	"123"
+reg	equs	"d0"
+opc	equs	"moveq"
+	dc.b	"\str"
+	dc.b	"str"
+	dc.b	'\str\x'
+	dc.l	num+4
+	dc.l	x\num
+	dc.b	strcmp("a","a"), strcmp("a","b"), strcmp("\str","hello")
+	dc.b	instr("hello","l"), instr("hello","z"), instr(4,"hello","l")
+sub1	substr	2,3,"\str"
+sub2	substr	2,,"\str"
+sub3	substr	,2,"\str"
+	dc.b	"\sub1","\sub2","\sub3"
+x123	equ	$55
+s2	equs	str
+	dc.b	"\s2"
+s3	equs	'it''s'
+	dc.b	"\s3"
+	dc.b	def(x123), def(nope), def(fwd), def(str), ~def(nope)
+	if	def(x123)
+	dc.b	1
+	endif
+	if	~def(x123)
+	dc.b	2
+	else
+	dc.b	3
+	endc
+	if 0
+	dc.b	4
+	elseif 1
+	dc.b	5
+	elseif 1
+	dc.b	6
+	else
+	dc.b	7
+	endif
+	ifeq	0
+	dc.b	8
+	endc
+	ifne	0
+	dc.b	9
+	endc
+	ifd	x123
+	dc.b	10
+	endc
+	ifnd	x123
+	dc.b	11
+	endc
+	ifgt	1
+	dc.b	12
+	endc
+	iflt	-1
+	dc.b	13
+	endc
+	ifge	0
+	dc.b	14
+	endc
+	ifle	0
+	dc.b	15
+	endc
+	ifc	"a","a"
+	dc.b	16
+	endc
+	ifnc	"a","b"
+	dc.b	17
+	endc
+	case	2
+=1
+	dc.b	18
+=2,3
+	dc.b	19
+=?
+	dc.b	20
+	endcase
+cnt	=	0
+	while	cnt<3
+	dc.b	$30+cnt
+cnt	=	cnt+1
+	endw
+	do
+	dc.b	$40+cnt
+cnt	=	cnt-1
+	until	cnt=0
+	rept	2
+	dc.b	$50
+	endr
+	rept	0
+	dc.b	$51
+	endr
+fwd:
+	dc.b	def(fwd)
+	dc.b	type(fwd),type(x123),type(cnt),type(str)

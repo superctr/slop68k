@@ -1,0 +1,35 @@
+; An object file that refers to and is referred to by others.
+	opt	c+
+	xdef	start,table,CONST
+	xref	printf,extvar
+CONST	equ	$1234
+	section	.text
+start:
+	moveq	#1,d0
+	lea	table,a0
+	lea	table(pc),a1
+	move.l	#buffer,d1
+	move.w	extvar,d2
+	move.w	extvar+4,d2
+	jsr	printf
+	bsr	printf
+	bsr.s	local1
+	bsr	local1
+	bra	helper
+	move.l	(extvar).w,d0
+	move.w	#CONST,d0
+local1:
+	rts
+	section	.data
+table:
+	dc.l	start,local1,printf,buffer+8
+	dc.w	table-*
+	dc.w	CONST
+	section	.bss
+buffer:
+	ds.b	16
+	section	.text
+helper:
+	lea	buffer,a0
+@loop:	dbra	d0,@loop
+	rts

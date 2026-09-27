@@ -1,0 +1,41 @@
+; switches: /k /p /o ae-
+; Groups and sections in a program that is not linked.
+	org	$100
+g_code	group
+g_data	group
+g_bss	group	bss
+	section	code,g_code
+start:
+	moveq	#1,d0
+	lea	table,a0
+	lea	buffer,a1
+	move.w	table(pc),d0
+	bsr	sub1
+	rts
+	section	data,g_data
+table:
+	dc.w	1,2,3
+	dc.l	start,sub1,buffer
+	section	bss,g_bss
+buffer:
+	ds.b	16
+bufend:
+	section	code
+sub1:
+	move.l	#bufend-buffer,d0
+	move.l	#table,d1
+	rts
+	section	data
+more:
+	dc.b	1,2,3
+	dc.l	more
+	dc.w	sect(table),offset(more)
+	dc.l	sectsize(code),sectsize(data)
+	pushs
+	section	code
+sub2:	nop
+	pops
+	dc.b	$55
+	even
+last:
+	dc.l	sub2,last

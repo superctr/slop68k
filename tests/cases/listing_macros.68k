@@ -1,0 +1,68 @@
+; switches: /k /p /m /o ae-
+; What goes into the listing, with the listing of macros.
+	org	0
+m1	macro
+	dc.b	\1
+xx\@	equ	5
+	dc.w	\1
+	endm
+m2	macro
+	if \1
+	dc.b	\1
+	endif
+	endm
+m3	macro
+	dc.b	1
+	nop
+	endm
+m4	macro
+yy\@	equ	7
+	endm
+m5	macro
+	endm
+	include	"inc/inc1.inc"
+	include	"inc/inc2.inc"
+	include	inc/inc3.inc
+	include	inc/inc4.inc
+	m1	$11
+	m2	$22
+	m3
+	m4
+lab1:	m1	$33
+	dc.b	1
+	m3
+	rept	3
+	dc.b	$44
+	endr
+	if 0
+	dc.b	$55
+	else
+	dc.b	$66
+	endif
+	dc.b	1
+	even
+	list -
+	dc.b	$77
+	list +
+	dc.b	$78
+	nolist
+	dc.b	$79
+	list
+	dc.b	$7a
+	dc.b	1
+	cnop	0,2
+	opt	ae+
+	dc.b	1
+	dc.w	2
+	dc.b	1
+lab2:	dc.w	3
+	dc.b	1
+lab3:	ds.w	1
+	dc.b	1
+	dcb.w	2,4
+	dc.b	1
+	dc.l	5
+	dc.b	1
+lab4:
+	dc.l	lab2,lab3,lab4
+	opt	ae-

@@ -1,0 +1,68 @@
+; switches: /k /p /o ae-
+; Errors, to compare the messages.
+	org	0
+; errors, one per line, to compare messages
+	moveq	#1
+	move.w	d0
+	move.w	d0,d1,d2
+	frob	d0
+	move.q	d0,d1
+	move.b	d0,a0
+	lea	d0,a0
+	dc.b	undefined_sym
+	bra.s	far_away
+	ds.b	200
+far_away:
+lab	equ	1
+lab	equ	2
+lab2:
+lab2:
+	if	undefined2
+	endif
+	endif
+	else
+	endr
+	endm
+	endw
+	until 1
+	mexit
+	shift
+	local	x
+	popp	x
+	popo
+	pops
+	modend
+	endcase
+	rept	undefined3
+	endr
+	even
+	dc.w	1/0
+	dc.b	(1+2
+	dc.b	1+
+	dc.b	'abc
+	dc.b	$
+	dc.b	%
+	dc.l	d0
+	org	undefined4
+	cnop	0,0
+	incbin	"nonexistent.bin"
+	substr	1,2,"abc"
+s1	substr	5,6,"abc"
+s2	substr	1,2
+	inform	2,"custom error %d",5
+	purge	nomacro
+xx	set	undefined5
+1abc:	nop
+	dc.b	strlen(abc)
+	dc.b	narg
+	opt	zz+
+	opt	ae
+	equ	5
+	even
+	movem.l	d0-,(sp)
+	radix	99
+	move.w	4(a0,d0.q),d1
+	addq	#1
+	trap	d0
+	fail
+	dc.b	$99

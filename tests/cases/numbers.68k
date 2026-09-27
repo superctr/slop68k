@@ -1,0 +1,15 @@
+; switches: /k /p /o ae-
+; Numbers, addresses with sizes and immediate forms.
+	org	0
+	dc.w	0x10
+	dc.w	0X1f
+	dc.w	017
+	dc.w	$1F
+	subi.w	#$20,a5
+	addi.l	#$20,a5
+	cmpi.w	#$20,a5
+	addq.w	#1,a5
+	btst	#1,label(pc)
+label:
+	move.w	2+(4)(a0),d0
+	move.w	(2)+4(a0),d0

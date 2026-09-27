@@ -1,0 +1,68 @@
+; switches: /k /p /m /o ae-
+; Local labels, RS counters, alignment and data directives.
+	org	$10
+glob1:
+@a	dc.b	1
+	dc.b	@a-glob1, @b-glob1
+eq1	equ	5
+@b	dc.b	2
+	dc.b	@a-glob1
+mm	macro
+	dc.b	@a-glob1
+@m\@	dc.b	\1
+	dc.b	@m\@-glob1
+	endm
+	mm	3
+	mm	4
+	dc.b	@a-glob1
+glob2
+@a	dc.b	5
+	dc.b	@a-glob1
+	bra.s	@a
+	dc.b	7
+	nop
+	rsreset
+r1	rs.b	1
+r2	rs.w	1
+r3	rs.l	1
+r4	rs.b	3
+r5	rs	2
+r6	rs.b	0
+	dc.b	r1,r2,r3,r4,r5,r6,__rs
+	rsset	$100
+r7	rs.w	1
+	dc.w	r7,__rs
+	rsreset	4
+r8	rs.l	1
+	dc.w	r8,__rs
+	even
+	dc.b	1
+	even
+	dc.b	1
+	cnop	0,4
+	dc.b	1
+	cnop	2,4
+	dc.b	1
+	ds.b	3
+	ds.w	2
+	ds.l	1
+	ds	1
+	dcb.b	3,$aa
+	dcb.w	2,$bbcc
+	dcb.l	1,$11223344
+	dcb	1,$55
+	incbin	"inc/data.bin"
+	incbin	inc/data.bin,2
+	incbin	'inc/data.bin',2,3
+	hex	0102aBcD
+	dc.b	filesize("inc/data.bin")
+	obj	$8000
+ob1:	dc.l	*,ob1
+	objend
+ob2:	dc.l	*,ob2
+	inform	0,"hello %d %h %s",10,$abcd,"str"
+	inform	1,"warn"
+	inform	0,"val %d%d",-1,100000
+	inform	0,"%h %h",-1,$12
+	end
+	dc.b	$99

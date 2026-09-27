@@ -1,0 +1,22 @@
+; switches: /k /p /o ae-
+; Scope of local labels around macros that define labels.
+	org	0
+mm	macro
+glab\@:
+	dc.b	\1
+	endm
+m2	macro
+	dc.b	\1
+	endm
+func:
+	dc.b	$11
+@loop	dc.b	1
+	m2	2
+@two	dc.b	3
+	mm	4
+@three	dc.b	5
+	mm	6
+@four	dc.b	7
+	dc.b	@four-func
+	m2	8
+	dc.b	@four-func

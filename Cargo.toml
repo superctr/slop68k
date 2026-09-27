@@ -1,0 +1,19 @@
+[package]
+name = "slop68k"
+version = "0.1.0"
+edition = "2021"
+description = "A fast, cross-platform 68000 macro assembler compatible with the SN Systems / Psy-Q asm68k syntax"
+readme = "README.md"
+
+[[bin]]
+name = "slop68k"
+path = "src/main.rs"
+
+[lib]
+name = "slop68k"
+path = "src/lib.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1

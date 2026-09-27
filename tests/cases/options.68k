@@ -1,0 +1,113 @@
+; switches: /k /p /o ae-
+; Assembler options and less common directives and instructions.
+	org	0
+; --- local label character
+	opt	l.
+glob:
+.loc	dc.b	1
+	dc.b	.loc-glob
+	bra.s	.loc
+	opt	l-
+@at	dc.b	2
+	opt	l:
+:col	dc.b	3
+	dc.b	:col-glob
+	opt	l-
+; --- case sensitivity
+	opt	c+
+Name	equ	1
+name	equ	2
+NAME	equ	3
+	dc.b	Name,name,NAME
+	MOVEQ	#1,D0
+	opt	c-
+	dc.b	NAME2
+name2	equ	4
+; --- white space option
+	opt	ws+
+	dc.b	1 + 2, 3 * 4
+	move.w	d0 , d1
+	dc.b	5	; comment
+	opt	ws-
+	dc.b	1 + 2
+; --- alternate numeric
+	opt	an+
+	dc.w	0ffh, 101b, 99d, 12, 0FFH
+	opt	an-
+; --- descope on equ
+glob2:
+@l1	dc.b	1
+eq	equ	5
+	dc.b	@l1-glob2
+	opt	d+
+glob3:
+@l2	dc.b	1
+st	set	5
+	dc.b	eq
+	opt	d-
+; --- data / datasize / ieee / hex
+	datasize	8
+	data	$123456789ABCDEF0
+	data	-1,255
+	datasize	3
+	data	65536,-2
+	ieee32	1.5,-2.25,34e10
+	ieee64	123456.7654321e-2
+	hex	00ff1234
+; --- radix
+; --- character constants
+	dc.l	'a','ab','abc','abcd'
+	dc.w	'a'<<8,"a"+"b"
+	dc.b	'''',"""",'"',"'"
+	dc.b	'',""
+	dc.b	'a''b',"a""b"
+	even
+; --- alias / disable
+myoff	alias	offset
+	disable	offset
+offset	dc.b	1
+	dc.b	offset
+	even
+; --- dc with forward and negative
+	dc.b	fwd-*,-1,$ff,255,-128
+	dc.w	fwd-*,-1,$ffff,-32768
+	dc.l	fwd-*,-1
+fwd:
+; --- shift / rotate / misc forms
+	asl	#1,d0
+	asr.b	d1,d2
+	roxl.l	#8,d7
+	ror	(a0)+
+	lsr.w	-(a1)
+	bchg	d0,d1
+	bclr	#31,d1
+	bset	#7,$1234.w
+	btst	#0,#1
+	btst	d0,#1
+	move.w	#1,$12(a0,d0.l)
+	move.b	(a0,a1.w),d0
+	move.l	(sp)+,(sp)
+	cmpm.l	(a0)+,(a1)+
+	eor.l	d0,(a0)
+	eori.b	#1,d0
+	or.b	d0,(a0)
+	sub.l	(a0),d0
+	sub.l	d0,(a0)
+	neg.b	(a0)
+	negx.l	d0
+	not.w	$10(a0)
+	tst.l	(a0)+
+	chk	#5,d0
+	divs	d1,d0
+	swap	d7
+	jmp	(a0)
+	jsr	4(a0,d0.w)
+	jmp	(pc)
+	lea	(a0),a1
+	lea	$7fff(a0),a1
+	pea	(a0)
+	sf	d0
+	shi	(a0)
+	dbne	d0,fwd
+	move.l	#'ABCD',d0
+	move.w	#'AB',d0

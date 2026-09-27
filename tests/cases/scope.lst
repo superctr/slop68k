@@ -1,0 +1,22 @@
+00000000                            ; switches: /k /p /o ae-
+00000000                            ; Scope of local labels around macros that define labels.
+00000000                            	org	0
+00000000                            mm	macro
+00000000                            glab\@:
+00000000                            	dc.b	\1
+00000000                            	endm
+00000000                            m2	macro
+00000000                            	dc.b	\1
+00000000                            	endm
+00000000                            func:
+00000000 11                         	dc.b	$11
+00000001 01                         @loop	dc.b	1
+00000002 02                         	m2	2
+00000003 03                         @two	dc.b	3
+00000004 04                         	mm	4
+00000005 05                         @three	dc.b	5
+00000006 06                         	mm	6
+00000007 07                         @four	dc.b	7
+00000008 07                         	dc.b	@four-func
+00000009 08                         	m2	8
+0000000A 07                         	dc.b	@four-func

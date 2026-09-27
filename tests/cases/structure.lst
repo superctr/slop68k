@@ -1,0 +1,147 @@
+00000000                            ; switches: /k /p /m /o ae-
+00000000                            ; Modules, LOCAL, macro labels, PUSHP, MEXIT, CASE, EQUR and REG.
+00000000                            	org	$1000
+00001000                            ; --- modules and locals
+00001000                            Strat	module
+00001000 7001                       	moveq	#1,d0
+00001002 6000                       	bra.s	@Lab1
+00001004 4E71                       	nop
+00001006 5340                       @Lab1	subq.w	#1,d0
+00001008 6700                       	beq.s	@SetTact
+0000100A 4E75                       	rts
+0000100C                            @SetTact	module
+0000100C 30BC 0002                  	move.w	#2,(a0)
+00001010 2F09                       @Lab1	move.l	a1,-(sp)
+00001012 2011                       	move.l	(a1),d0
+00001014 6EFA                       	bgt.s	@Lab1
+00001016 4E75                       	rts
+00001018                            	modend
+00001018                            glob_in_mod:
+00001018 60EC                       	bra.s	@Lab1
+0000101A                            	modend
+0000101A                            after:
+0000101A 01                         @x	dc.b	1
+0000101B 00                         	dc.b	@x-after
+0000101C                            ; --- local in macro
+0000101C                            doorpos	macro
+0000101C                            	local	m_door1,doorw
+0000101C                            	bsr.s	doorw
+0000101C                            	nop
+0000101C                            m_door1	equ	\1*2
+0000101C                            doorw	dc.b	m_door1
+0000101C                            	even
+0000101C                            	endm
+0000101C                            	doorpos	3
+0000101C                          M 	local	m_door1,doorw
+0000101C 6100                     M 	bsr.s	doorw
+0000101E 4E71                     M 	nop
+00001020 =00000006                M m_door1	equ	3*2
+00001020 06                       M doorw	dc.b	m_door1
+00001022 00                       M 	even
+00001022                            	doorpos	4
+00001022                          M 	local	m_door1,doorw
+00001022 6100                     M 	bsr.s	doorw
+00001024 4E71                     M 	nop
+00001026 =00000008                M m_door1	equ	4*2
+00001026 08                       M doorw	dc.b	m_door1
+00001028 00                       M 	even
+00001028                            ; --- macro label parameter
+00001028                            lblm	macro	*,val
+00001028                            \*_tab	dc.b	\val
+00001028                            \*_len	equ	1
+00001028                            	endm
+00001028                            first	lblm	5
+00001028 05                       M first_tab	dc.b	5
+00001029 =00000001                M first_len	equ	1
+00001029                            second	lblm	6
+00001029 06                       M second_tab	dc.b	6
+0000102A =00000001                M second_len	equ	1
+0000102A 0E0F 01                    	dc.b	first_tab-after,second_tab-after,first_len
+0000102D                            ; --- pushp / popp
+0000102D                            	pushp	"hello"
+0000102D                            	pushp	"world"
+0000102D                            	popp	str1
+0000102D                            	popp	str2
+0000102D 776F 726C 6468 656C 6C6F   	dc.b	"\str1","\str2"
+00001037                            ; --- mexit and nested macros
+00001037                            inner	macro
+00001037                            	dc.b	\1
+00001037                            	if \1>5
+00001037                            	mexit
+00001037                            	endif
+00001037                            	dc.b	$ff
+00001037                            	endm
+00001037                            outer	macro
+00001037                            	rept	narg
+00001037                            	inner	\1
+00001037                            	shift
+00001037                            	endr
+00001037                            	dc.b	$ee
+00001037                            	endm
+00001037                            	outer	1,9,2
+00001037                          M 	rept	narg
+00001037                          M 	inner	1
+00001037 01                       M 	dc.b	1
+00001038 FF                       M 	dc.b	$ff
+00001039                          M 	shift
+00001039                          M 	inner	9
+00001039 09                       M 	dc.b	9
+0000103A                          M 	mexit
+0000103A                          M 	shift
+0000103A                          M 	inner	2
+0000103A 02                       M 	dc.b	2
+0000103B FF                       M 	dc.b	$ff
+0000103C                          M 	shift
+0000103C EE                       M 	dc.b	$ee
+0000103D                            ; --- purge and redefinition
+0000103D                            pm	macro
+0000103D                            	dc.b	1
+0000103D                            	endm
+0000103D                            	pm
+0000103D 01                       M 	dc.b	1
+0000103E                            pm	macro
+0000103E                            	dc.b	2
+0000103E                            	endm
+0000103E                            	pm
+0000103E 02                       M 	dc.b	2
+0000103F                            	purge	pm
+0000103F                            ; --- macros directive
+0000103F                            short	macros
+0000103F                            	dc.b	\1,\2
+0000103F                            	short	7,8
+0000103F 0708                     M 	dc.b	7,8
+00001041                            ; --- opt pusho popo
+00001041                            	pusho
+00001041                            	opt	ae+
+00001041 01                         	dc.b	1
+00001042 0002                       	dc.w	2
+00001044                            	popo
+00001044 01                         	dc.b	1
+00001045 0003                       	dc.w	3
+00001047                            ; --- case
+00001047 =00000003                  val	equ	3
+00001047 C2                         	dc.b	$c2
+00001048 D3                         	dc.b	$d3
+0000104A 00                         	even
+0000104A                            ; --- equr / reg
+0000104A                            Red	equr	a2
+0000104A                            Green	equr	d1
+0000104A                            saved	reg	d0-d3/a0-a1
+0000104A B032 1004                  	cmp.b	4(Red,Green.w),d0
+0000104E 220A                       	move.l	Red,Green
+00001050 48E7 F0C0                  	movem.l	saved,-(sp)
+00001054 4CDF 030F                  	movem.l	(sp)+,saved
+00001058 48E7 C020                  	movem.l	d0-d1/Red,-(sp)
+0000105C 351A                       	move.w	(Red)+,-(Red)
+0000105E                            ; --- forward equ chains
+0000105E 0000 0000                  	dc.w	fa,fb
+00001062                            fa	equ	fb+1
+00001062                            fb	equ	fc*2
+00001062 =00000015                  fc	equ	21
+00001062 0000 0000                  	dc.w	fa,fb
+00001066                            ; --- set before use
+00001066 =00000001                  cnt	set	1
+00001066 01                         	dc.b	cnt
+00001067 =00000002                  cnt	set	cnt+1
+00001067 02                         	dc.b	cnt
+00001068                            	even

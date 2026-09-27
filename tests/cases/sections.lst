@@ -1,0 +1,41 @@
+00000000                            ; switches: /k /p /o ae-
+00000000                            ; Groups and sections in a program that is not linked.
+00000000                            	org	$100
+00000100                            g_code	group
+00000100                            g_data	group
+00000100                            g_bss	group	bss
+00000100                            	section	code,g_code
+00000000                            start:
+00000000 7001                       	moveq	#1,d0
+00000002 41F9 0000 0000             	lea	table,a0
+00000008 43F9 0000 0000             	lea	buffer,a1
+0000000E 303A 0000                  	move.w	table(pc),d0
+00000012 6100 0000                  	bsr	sub1
+00000016 4E75                       	rts
+00000018                            	section	data,g_data
+00000000                            table:
+00000000 0001 0002 0003             	dc.w	1,2,3
+00000006 0000 0000 0000 0000 0000+  	dc.l	start,sub1,buffer
+00000012                            	section	bss,g_bss
+00000000                            buffer:
+00000000                            	ds.b	16
+00000010                            bufend:
+00000010                            	section	code
+00000018                            sub1:
+00000018 203C 0000 0010             	move.l	#bufend-buffer,d0
+0000001E 223C 0000 0000             	move.l	#table,d1
+00000024 4E75                       	rts
+00000026                            	section	data
+00000012                            more:
+00000012 0102 03                    	dc.b	1,2,3
+00000015 0000 0000                  	dc.l	more
+00000019 0000 0012                  	dc.w	sect(table),offset(more)
+0000001D 0000 0026 0000 0021        	dc.l	sectsize(code),sectsize(data)
+00000025                            	pushs
+00000025                            	section	code
+00000026 4E71                       sub2:	nop
+00000028 00                         	pops
+00000026 55                         	dc.b	$55
+00000028 00                         	even
+00000028                            last:
+00000028 0000 0000 0000 0000        	dc.l	sub2,last
